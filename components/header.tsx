@@ -18,7 +18,7 @@ const Header: NextComponentType = _ => {
 }
 
   return (
-    <header className="w-full float-left shadow h-16">
+    <header className="w-full shadow h-16">
       <div className="float-left h-full px-4 my-0 mx-auto flex items-center w-screen">
           <div className="float-left md:hidden">
             <FontAwesomeIcon icon={faBars} className="mr-2 w-6 text-2xl" onClick={(e) => toggleSideBar(e)} />

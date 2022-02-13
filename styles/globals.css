@@ -18,3 +18,45 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.w-8\.5\/10 {
+  width: 85%
+}
+
+@media (min-width: 768px) {
+  .md\:w-8\.5\/10 {
+    width: 85%;
+  }
+}
+
+.w-9\/10 {
+  width: 90%
+}
+
+.w-9\.5\/10 {
+  width: 95%
+}
+
+@media (min-width: 1024px) {
+  .lg\:pl-6 {
+    padding-left: 1.5rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .\32xl\:pl-6 {
+    padding-left: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:pr-6 {
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .\32xl\:pr-6 {
+    padding-right: 1.5rem;
+  }
+}
