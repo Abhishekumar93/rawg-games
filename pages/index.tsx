@@ -77,7 +77,7 @@ const Home: NextPage = () => {
     return (
       <div className='px-1 md:px-8'>
         <h1 className='text-3xl mb-8'>All Games</h1>
-        <div className='mb-2 grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row gap-x-8 gap-y-12 auto-rows-auto'>
+        <div className='mb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row gap-x-8 gap-y-12 auto-rows-auto'>
           {displayGamesList()}
         </div>
         <div className='w-full flex mb-6 justify-end pr-6 text-sm text-gray-500'>
