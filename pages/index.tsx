@@ -80,8 +80,8 @@ const Home: NextPage = () => {
         return (
           <Link href={`/game/${games.slug}`} key={games.name.toLowerCase().split(' ').join('-')}>
             <a>
-              <div className='md:w-9.5/10 cursor-pointer shadow-md hover:shadow-inner hover:shadow-gray-500 shadow-gray-400 rounded hover:transform hover:scale-110 hover:border-2 hover:border-white hover:ease-linear hover:duration-300'>
-                <div className='w-full p-1 bg-gray-400 rounded-t'>
+              <div className='md:w-9.5/10 cursor-pointer shadow-md bg-gray-200 hover:shadow-gray-500 shadow-gray-400 rounded hover:transform hover:scale-105 hover:ease-linear hover:duration-300'>
+                <div className='w-full p-1 bg-white rounded-t'>
                   {games && games.background_image ? <Image src={games.background_image} width={16} height={9} layout={'responsive'} objectFit="fill" alt={games.name} priority={index < 10 ? true : false} /> : null}
                 </div>
                 <div className='pt-1 pb-3 px-2'>
