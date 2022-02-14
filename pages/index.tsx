@@ -23,13 +23,32 @@ const Home: NextPage = () => {
 
   async function fetchGamesList() {
     axios.get(fetchType === '' ? `${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24` : fetchType === 'nextUrl' ? nextUrl : previousUrl).then(res => {
-      setGamesListFetched(true);setGamesList(res.data.results)
-      setSeoTitle(res.data.seo_title);setNextUrl(res.data.next === null ? '' : `${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24&page=${res.data.next.split('page=')[1]}`)
-      setPreviousUrl(res.data.previous === null ? '' : `${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24&page=${res.data.previous.split('page=')[1]}`)
+      let response = res.data.body
+      setGamesListFetched(true);setGamesList(response.results)
+      setSeoTitle(response.seo_title);
+      if (response.next === null) {
+        setNextUrl('')
+      } else {
+        getNextPreviousUrl(response.next, 'nextUrl')
+      }
+      if (response.previous === null) {
+        setPreviousUrl('')
+      } else {
+        getNextPreviousUrl(response.previous, 'previousUrl')
+      }
     }).catch(err => {
       setGamesListFetched(false);setGamesList([]);setPreviousUrl('')
       setSeoTitle('');setNextUrl('')
     });
+  }
+  const getNextPreviousUrl = (url: string, type: string) => {
+    let query_string = new URL(url)
+    let page_number = query_string.searchParams.get('page')
+    if (type === 'nextUrl') {
+      setNextUrl(`${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24${page_number === null ? '' : `&page=${page_number}`}`)
+    } else {
+      setPreviousUrl(`${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24${page_number === null ? '' : `&page=${page_number}`}`)
+    }
   }
 
   const fetchNextPreviousData = (e: MouseEvent, type: string) => {
@@ -73,23 +92,23 @@ const Home: NextPage = () => {
     )
   }
 
-  if (gamesListFetched) {
-    return (
-      <div className='px-1 md:px-8'>
-        <h1 className='text-3xl mb-8'>All Games</h1>
-        <div className='mb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row gap-x-8 gap-y-12 auto-rows-auto'>
-          {displayGamesList()}
-        </div>
-        <div className='w-full flex mb-6 justify-end pr-6 text-sm text-gray-500'>
-          {previousUrl === '' ? null : <p className='cursor-pointer underline' onClick={(e) => fetchNextPreviousData(e, 'previousUrl')} >Previous</p>}
-          {nextUrl === '' || previousUrl === '' ? null : <p>&nbsp;|&nbsp;</p>}
-          {nextUrl === '' ? null : <p className='cursor-pointer underline' onClick={(e) => fetchNextPreviousData(e, 'nextUrl')} >Next</p>}
-        </div>
-      </div>
-    )
-  } else {
-    return loader.loader()
-  }
+  return (
+    <div className='px-1 md:px-8'>
+      <h1 className='text-3xl mb-8'>All Games</h1>
+      {!gamesListFetched ? loader.loader() : 
+        <>
+          <div className='mb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row gap-x-8 gap-y-12 auto-rows-auto'>
+            {displayGamesList()}
+          </div>
+          <div className='w-full flex my-6 justify-end pr-6 text-sm text-gray-500'>
+            {previousUrl === '' ? null : <p className='cursor-pointer underline' onClick={(e) => fetchNextPreviousData(e, 'previousUrl')} >Previous</p>}
+            {nextUrl === '' || previousUrl === '' ? null : <p>&nbsp;|&nbsp;</p>}
+            {nextUrl === '' ? null : <p className='cursor-pointer underline' onClick={(e) => fetchNextPreviousData(e, 'nextUrl')} >Next</p>}
+          </div>
+        </>
+      }
+    </div>
+  )
 }
 
 export default Home
