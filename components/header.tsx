@@ -1,6 +1,7 @@
 import React, { MouseEvent } from 'react'
 import type { NextComponentType } from "next"
 import Link from "next/link"
+import Image from 'next/image'
 
 // Import FontAwesomeIcon here
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -20,17 +21,17 @@ const Header: NextComponentType = _ => {
   return (
     <header className="w-full shadow h-16">
       <div className="float-left h-full px-4 my-0 mx-auto flex items-center w-screen">
-          <div className="float-left md:hidden">
-            <FontAwesomeIcon icon={faBars} className="mr-2 w-6 text-2xl" onClick={(e) => toggleSideBar(e)} />
-          </div>
-          {/* <Link href="/"> */}
-            {/* <StaticImage src="../images/logo.png" alt="logo" width={40} height={40} /> */}
-          {/* </Link> */}
-          <div className="float-left hidden md:block">
-            <Link href="/">
-              <a className="text-base no-underline hover:text-green-900 font-semibold ml-2" style={{color: 'rgb(0, 128, 128)'}}>Tivix</a>
-            </Link>
-          </div>
+        <div className="float-left md:hidden">
+          <FontAwesomeIcon icon={faBars} className="mr-2 w-6 text-2xl" onClick={(e) => toggleSideBar(e)} />
+        </div>
+        <Link href="/">
+          <a className='flex'><Image src="/logo.png" alt="logo" width={30} height={30} layout={'fixed'} /></a>
+        </Link>
+        <div className="float-left hidden md:block">
+          <Link href="/">
+            <a className="text-base no-underline hover:text-green-900 font-semibold ml-2" style={{color: 'rgb(0, 128, 128)'}}>Tivix</a>
+          </Link>
+        </div>
       </div>
     </header>
   )

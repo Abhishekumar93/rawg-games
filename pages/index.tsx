@@ -22,10 +22,10 @@ const Home: NextPage = () => {
   }, [gamesListFetched])
 
   async function fetchGamesList() {
-    axios.get(fetchType === '' ? `https://api.rawg.io/api/games?page_size=24&key=e648abe0c449445c8b7373607e545a31` : fetchType === 'nextUrl' ? nextUrl : previousUrl).then(res => {
+    axios.get(fetchType === '' ? `${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24` : fetchType === 'nextUrl' ? nextUrl : previousUrl).then(res => {
       setGamesListFetched(true);setGamesList(res.data.results)
-      setSeoTitle(res.data.seo_title);setNextUrl(res.data.next === null ? '' : res.data.next)
-      setPreviousUrl(res.data.previous === null ? '' : res.data.previous)
+      setSeoTitle(res.data.seo_title);setNextUrl(res.data.next === null ? '' : `${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24&page=${res.data.next.split('page=')[1]}`)
+      setPreviousUrl(res.data.previous === null ? '' : `${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24&page=${res.data.previous.split('page=')[1]}`)
     }).catch(err => {
       setGamesListFetched(false);setGamesList([]);setPreviousUrl('')
       setSeoTitle('');setNextUrl('')

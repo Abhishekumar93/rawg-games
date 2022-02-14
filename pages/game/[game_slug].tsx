@@ -63,7 +63,7 @@ const SingleGameDetail: NextPage = () => {
           <a><FontAwesomeIcon icon={faArrowLeft} size="3x" className='text-2xl cursor-pointer' style={{width: '1.5rem'}} /></a>
         </Link>
         <div className='w-9.5/10 mx-auto md:w-3/4 rounded-md shadow-inner py-8 shadow-gray-500'>
-          <h1 className="text-3xl mb-8 text-center font-bold">{gameDetail.name}</h1>
+          <h1 className="text-3xl md:text-4xl mb-8 text-center font-bold">{gameDetail.name}</h1>
           {displayGameDetail()}
         </div>
       </>
