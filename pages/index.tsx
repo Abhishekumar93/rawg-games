@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, MouseEvent } from 'react'
+import { useEffect, useState, MouseEvent, useCallback, ChangeEvent, EffectCallback } from 'react'
 import axios from 'axios'
 import type { NextPage } from 'next'
 import Image from 'next/image'
@@ -8,24 +8,26 @@ import loader from '../components/loader'
 
 const Home: NextPage = () => {
 
+  const GAME_URL = `${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=12`
+
   const [gamesListFetched, setGamesListFetched] = useState(false)
   const [gamesList, setGamesList] = useState([])
-  const [seoTitle, setSeoTitle] = useState('')
   const [nextUrl, setNextUrl] = useState('')
   const [previousUrl, setPreviousUrl] = useState('')
   const [fetchType, setFetchType] = useState('')
+  const [searchValue, setSearchValue] = useState('')
 
-  useEffect(() => {
+  useEffect((): ReturnType<EffectCallback> => {
     if (!gamesListFetched) {
       fetchGamesList()
     }
+    return (): void => {}
   }, [gamesListFetched])
 
   async function fetchGamesList() {
-    axios.get(fetchType === '' ? `${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24` : fetchType === 'nextUrl' ? nextUrl : previousUrl).then(res => {
+    axios.get(fetchType === '' ? `${GAME_URL}${searchValue === '' ? '' : `&search=${searchValue}`}` : fetchType === 'nextUrl' ? nextUrl : previousUrl).then(res => {
       let response = res.data.body
       setGamesListFetched(true);setGamesList(response.results)
-      setSeoTitle(response.seo_title);
       if (response.next === null) {
         setNextUrl('')
       } else {
@@ -37,20 +39,20 @@ const Home: NextPage = () => {
         getNextPreviousUrl(response.previous, 'previousUrl')
       }
     }).catch(err => {
-      setGamesListFetched(false);setGamesList([]);setPreviousUrl('')
-      setSeoTitle('');setNextUrl('')
+      setGamesListFetched(false);setGamesList([]);
+      setPreviousUrl('');setNextUrl('')
     });
   }
+
   const getNextPreviousUrl = (url: string, type: string) => {
     let query_string = new URL(url)
     let page_number = query_string.searchParams.get('page')
     if (type === 'nextUrl') {
-      setNextUrl(`${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24${page_number === null ? '' : `&page=${page_number}`}`)
+      setNextUrl(`${GAME_URL}${searchValue === '' ? '' : `&search=${searchValue}`}${page_number === null ? '' : `&page=${page_number}`}`)
     } else {
-      setPreviousUrl(`${process.env.NEXT_PUBLIC_API_GATEWAY_HOST}games?page_size=24${page_number === null ? '' : `&page=${page_number}`}`)
+      setPreviousUrl(`${GAME_URL}${searchValue === '' ? '' : `&search=${searchValue}`}${page_number === null ? '' : `&page=${page_number}`}`)
     }
   }
-
   const fetchNextPreviousData = (e: MouseEvent, type: string) => {
     e.preventDefault()
     setGamesListFetched(false);setFetchType(type)
@@ -58,6 +60,10 @@ const Home: NextPage = () => {
     if (main_div) {
       main_div.scrollTo({top: 0, left: 0, behavior: 'smooth'}) 
     }
+  }
+  const searchGame = (e: ChangeEvent, value: string) => {
+    e.preventDefault()
+    setSearchValue(value);setGamesListFetched(false)
   }
 
   const displayGameGenres = (genres: []) => {
@@ -76,7 +82,7 @@ const Home: NextPage = () => {
             <a>
               <div className='md:w-9.5/10 cursor-pointer shadow-md hover:shadow-inner hover:shadow-gray-500 shadow-gray-400 rounded'>
                 <div className='w-full p-1 bg-gray-400 rounded-t'>
-                  <Image src={games.background_image} width={16} height={9} layout={'responsive'} objectFit="fill" alt={games.name} priority={index < 10 ? true : false} />
+                  {games && games.background_image ? <Image src={games.background_image} width={16} height={9} layout={'responsive'} objectFit="fill" alt={games.name} priority={index < 10 ? true : false} /> : null}
                 </div>
                 <div className='pt-1 pb-3 px-2'>
                   <h2 className='font-bold text-xl 2xl:text-2xl truncate'>{games.name}</h2>
@@ -94,18 +100,28 @@ const Home: NextPage = () => {
 
   return (
     <div className='px-1 md:px-8'>
-      <h1 className='text-3xl mb-8'>All Games</h1>
+      <div className='md:flex md:items-center md:justify-between mb-8'>
+        <h1 className='text-3xl mb-2 md:mb-0'>All Games</h1>
+        <div className='flex items-center text-gray-600 p-2 rounded-2xl shadow-md shadow-gray-400 border border-white md:w-1/3'>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+          </svg>
+          <input type="text" className={`w-full text-black bg-transparent text-sm pl-2 pr-1.5 focus:outline-none`} id="search" name="search" placeholder='search' defaultValue={searchValue} onChange={(e) => searchGame(e, e.target.value)} />
+        </div>
+      </div>
       {!gamesListFetched ? loader.loader() : 
-        <>
-          <div className='mb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row gap-x-8 gap-y-12 auto-rows-auto'>
-            {displayGamesList()}
-          </div>
-          <div className='w-full flex my-6 justify-end pr-6 text-sm text-gray-500'>
-            {previousUrl === '' ? null : <p className='cursor-pointer underline' onClick={(e) => fetchNextPreviousData(e, 'previousUrl')} >Previous</p>}
-            {nextUrl === '' || previousUrl === '' ? null : <p>&nbsp;|&nbsp;</p>}
-            {nextUrl === '' ? null : <p className='cursor-pointer underline' onClick={(e) => fetchNextPreviousData(e, 'nextUrl')} >Next</p>}
-          </div>
-        </>
+        gamesList.length > 0 ? 
+          <>
+            <div className='mb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 grid-flow-row gap-x-8 gap-y-12 auto-rows-auto'>
+              {displayGamesList()}
+            </div>
+            <div className='w-full flex my-6 justify-end pr-6 text-sm text-gray-500'>
+              {previousUrl === '' ? null : <p className='cursor-pointer underline' onClick={(e) => fetchNextPreviousData(e, 'previousUrl')} >Previous</p>}
+              {nextUrl === '' || previousUrl === '' ? null : <p>&nbsp;|&nbsp;</p>}
+              {nextUrl === '' ? null : <p className='cursor-pointer underline' onClick={(e) => fetchNextPreviousData(e, 'nextUrl')} >Next</p>}
+            </div>
+          </> : 
+          <h2 className='text-3xl mb-2 md:mb-0 font-light'>No games found for&nbsp;<span className='font-bold'>{searchValue}</span></h2>
       }
     </div>
   )
