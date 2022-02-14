@@ -9,7 +9,7 @@ import Image from "next/image"
 
 const Layout: NextComponentType = ({children}) => {
   return (
-    <div className="w-full bg-gray-200 dark:bg-gray-700">
+    <div className="w-full bg-gray-200">
       <Header />
       <main>
         <div className="flex relative">
