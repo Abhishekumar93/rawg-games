@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState, MouseEvent, useCallback, ChangeEvent, EffectCallback } from 'react'
 import axios from 'axios'
+import _ from 'lodash'
 import type { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -17,6 +18,8 @@ const Home: NextPage = () => {
   const [fetchType, setFetchType] = useState('')
   const [searchValue, setSearchValue] = useState('')
 
+  const debounce_query = useCallback(_.debounce((value) => fetchGamesList(value), 2000), []);
+
   useEffect((): ReturnType<EffectCallback> => {
     if (!gamesListFetched) {
       fetchGamesList()
@@ -24,8 +27,8 @@ const Home: NextPage = () => {
     return (): void => {}
   }, [gamesListFetched])
 
-  async function fetchGamesList() {
-    axios.get(fetchType === '' ? `${GAME_URL}${searchValue === '' ? '' : `&search=${searchValue}`}` : fetchType === 'nextUrl' ? nextUrl : previousUrl).then(res => {
+  async function fetchGamesList(value='') {
+    axios.get(fetchType === '' ? `${GAME_URL}${value === '' ? '' : `&search=${value}`}` : fetchType === 'nextUrl' ? nextUrl : previousUrl).then(res => {
       let response = res.data.body
       setGamesListFetched(true);setGamesList(response.results)
       if (response.next === null) {
@@ -106,7 +109,7 @@ const Home: NextPage = () => {
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
           </svg>
-          <input type="text" className={`w-full text-black bg-transparent text-sm pl-2 pr-1.5 focus:outline-none`} id="search" name="search" placeholder='search' defaultValue={searchValue} onChange={(e) => searchGame(e, e.target.value)} />
+          <input type="text" className={`w-full text-black bg-transparent text-sm pl-2 pr-1.5 focus:outline-none`} id="search" name="search" placeholder='search' defaultValue={searchValue} onChange={(e) => {searchGame(e, e.target.value);debounce_query(e.target.value)}} />
         </div>
       </div>
       {!gamesListFetched ? loader.loader() : 
