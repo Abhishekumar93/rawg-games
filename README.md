@@ -20,11 +20,11 @@ RAWG Games is a responsive game-discovery application built with Next.js and Typ
 - **Debounced Search**: Search input with a 2-second debounce (`lodash.debounce`) to optimize query dispatching as users type.
 - **Previous/Next Pagination**: Pagination controls that handle page navigation via AWS API Gateway responses.
 - **Dynamic Game-Detail Pages**: Slug-based dynamic routing (`/game/[game_slug]`) providing in-depth title details.
-- **Rich Metadata Display**: Detail views presenting ratings, genre classifications, release dates, and developer credits.
+- **Rich Metadata Display**: Detail views presenting ratings, genres, website information, developer credits, and sanitized descriptions.
 - **External Game Website Links**: Direct links to official game publisher websites.
 - **Sanitized HTML Descriptions**: Safe rendering of RAWG rich text descriptions using DOMPurify to prevent XSS.
 - **Optimized Remote Images**: Configured Next.js Image component (`next/image`) with `media.rawg.io` domain support.
-- **AWS API Gateway Integration**: Centralized public HTTP endpoint routing requests to serverless Lambda microservices.
+- **AWS API Gateway Integration**: Centralized public HTTP endpoint routing requests to serverless Lambda functions.
 - **Python Lambda Handlers**: Dedicated Lambda functions handling game list/search queries and game detail retrieval.
 
 ---
@@ -57,7 +57,7 @@ flowchart LR
 | UI Library | React 19 | Component-based user interface |
 | Language | TypeScript 5.7 | Type definitions and static typing |
 | Styling | Tailwind CSS 3.4 | Utility-first CSS styling and layout |
-| Icons | FontAwesome 6.7 | UI icons (navigation bar, search, arrows) |
+| Icons | FontAwesome 6.7 | Navigation, menu, home, and back icons |
 | HTTP Client | Axios 1.8 | Client-side HTTP requests |
 | HTML Sanitization | DOMPurify 3.2 | Sanitizing RAWG HTML game descriptions |
 | Utilities | Lodash 4.17 | Debouncing search inputs |
