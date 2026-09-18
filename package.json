@@ -1,5 +1,5 @@
 {
-  "name": "tivix-assignment-frontend",
+  "name": "rawg-games",
   "private": true,
   "scripts": {
     "dev": "next dev",
